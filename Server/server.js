@@ -18,10 +18,12 @@ console.log('New User Connected');
 
  socket.emit('newMessage',generateMessage('Admin','Welcome to Chat App'));
  socket.broadcast.emit('newMessage',generateMessage('Admin','New User Join to Group')); //broadcast to other user not selfone 
-socket.on('createMessage', (message) =>{
+socket.on('createMessage', (message,callback) =>{
     console.log('Create Message',message);
     io.emit('newMessage',generateMessage(message.from,message.text));
-
+callback({
+    text:"This Hello From Server"
+})
 // socket.broadcast.emit('newMessage',{     //broadcast to other user not selfone 
 //     from:message.from,
 //    text:message.text,
