@@ -14,12 +14,18 @@ app.use(express.static(publicPath));
 io.on('connection',(socket)=>{     //connection event to client 
 console.log('New User Connected');
 
+ socket.emit('newMessage',{
+    from:'Admin',
+    text:'Welcome to Chat Application',
+    createAt:new Date().getTime()
+ });
 
-// socket.emit('newMessage',{
-// from:'Bunny',
-// text:'Hello How are you',
-// createAt:1.00
-// });
+ socket.broadcast.emit('newMessage',{     //broadcast to other user not selfone 
+       from:'admin',
+        text:'new user join',
+      createAt:new Date().getTime()
+
+ });
 
 
 
@@ -29,6 +35,13 @@ socket.on('createMessage', (message) =>{
         from:message.from,
         text:message.text,
         createAt:new Date().getTime()
+
+// socket.broadcast.emit('newMessage',{     //broadcast to other user not selfone 
+//     from:message.from,
+//    text:message.text,
+//    createAt:new Date().getTime()
+
+
     });
 });
 
