@@ -1,6 +1,6 @@
 const path=require('path');
 const http=require('http');
-const publicPath= path.join(__dirname,'../public');
+const publicPath= path.join(__dirname,'../Public');
 const express=require('express'); //middleware express
 const sokectIO=require('socket.io');
 const port=process.env.PORT || 3000;
