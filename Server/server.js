@@ -4,7 +4,7 @@ const publicPath= path.join(__dirname,'../Public');
 const express=require('express'); //middleware express
 const sokectIO=require('socket.io');
 const port=process.env.PORT || 3000;
-const {generateMessage}=require('./utils/message')
+const {generateMessage,generateLocationMessage}=require('./utils/message')
 
 var app=express();//middleware
 var server=http.createServer(app);
@@ -30,7 +30,10 @@ callback({
 //    createAt:new Date().getTime()
 });
 
+socket.on('createLocationMessage',(coords)=>{
 
+io.emit('newLocationMessage',generateLocationMessage('Admin',coords.latitude,coords.longitude))
+});
 
 
 
