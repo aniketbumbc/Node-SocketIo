@@ -1,20 +1,20 @@
-var generateMessage =(from,text)=>{
+var generateMessage = (from, text) => {
 
     return {
         from,
         text,
-        createdAt:new Date().getTime()
-        }
+        createdAt: new Date().getTime()
+    }
 
 };
 
 
-var generateLocationMessage =(from,latitude,longitude)=>{
+var generateLocationMessage = (from, latitude, longitude) => {
 
-    return{
+    return {
         from,
-        url:`https://www.google.co.in/maps?q=${latitude},${longitude}`,
-        createdAt:new Date().getTime()
+        url: `https://www.google.co.in/maps?q=${latitude},${longitude}`,
+        createdAt: new Date().getTime()
 
     }
 };
@@ -25,4 +25,4 @@ var generateLocationMessage =(from,latitude,longitude)=>{
 
 
 
-module.exports={generateMessage, generateLocationMessage};
+module.exports = { generateMessage, generateLocationMessage };
