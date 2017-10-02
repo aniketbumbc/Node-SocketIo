@@ -11,7 +11,7 @@ describe('generateMessage', () => {
         expect(message.createdAt).toBeA('number');
         expect(message).toInclude({ from, text });
 
-    });
+    }); 
 });
 
 

@@ -17,8 +17,7 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {     //connection event to client 
     console.log('New User Connected');
 
-    socket.emit('newMessage', generateMessage('Admin', 'Welcome to Chat App'));
-    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New User Join to Group')); //broadcast to other user not selfone 
+    //broadcast to other user not selfone 
 
 
     socket.on('join',(params,callback)=>{
@@ -27,6 +26,11 @@ io.on('connection', (socket) => {     //connection event to client
          callback('Name require and Room name need');   
         }
 
+        socket.join(params.room);
+        
+
+        socket.emit('newMessage', generateMessage('Admin', 'Welcome to Chat App'));
+        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has Join`));
         callback();
     });
 
@@ -47,10 +51,6 @@ io.on('connection', (socket) => {     //connection event to client
 
         io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
     });
-
-
-
-
     socket.on('disconnect', (socket) => {
         console.log('User disconnected');
     });
