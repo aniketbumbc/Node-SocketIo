@@ -5,6 +5,7 @@ const express = require('express'); //middleware express
 const sokectIO = require('socket.io');
 const port = process.env.PORT || 3000;
 const { generateMessage, generateLocationMessage } = require('./utils/message')
+const {isRealString}=require('./utils/validation');
 
 var app = express();//middleware
 var server = http.createServer(app);
@@ -18,6 +19,20 @@ io.on('connection', (socket) => {     //connection event to client
 
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to Chat App'));
     socket.broadcast.emit('newMessage', generateMessage('Admin', 'New User Join to Group')); //broadcast to other user not selfone 
+
+
+    socket.on('join',(params,callback)=>{
+        if(!isRealString(params.name)|| !isRealString(params.room))
+        {
+         callback('Name require and Room name need');   
+        }
+
+        callback();
+    });
+
+
+
+
     socket.on('createMessage', (message, callback) => {
         console.log('Create Message', message);
         io.emit('newMessage', generateMessage(message.from, message.text));
