@@ -50,8 +50,23 @@ socket.emit('join', params, function(err){
 });
 socket.on('disconnect', function () {
     console.log('Disconnected to Server');
-
 });
+
+socket.on('updateUserList',function(users){
+var ol=jQuery('<ol></ol>');
+
+users.forEach(function(user){
+
+    ol.append(jQuery('<li></li>').text(user));
+});
+jQuery('#users').html(ol);
+});
+
+
+
+
+
+
 socket.on('newMessage', function (message) {
     var formatedTime=moment(message.createdAt).format('MMM Do, YYYY,h:mm a');
     var template=jQuery('#message-template').html();

@@ -4,13 +4,14 @@ const publicPath = path.join(__dirname, '../Public');
 const express = require('express'); //middleware express
 const sokectIO = require('socket.io');
 const port = process.env.PORT || 3000;
-const { generateMessage, generateLocationMessage } = require('./utils/message')
+const { generateMessage, generateLocationMessage } = require('./utils/message');
 const {isRealString}=require('./utils/validation');
+const {Users}=require('./utils/users');
 
 var app = express();//middleware
 var server = http.createServer(app);
 var io = sokectIO(server);
-
+var users=new Users();
 
 app.use(express.static(publicPath));
 
@@ -23,14 +24,17 @@ io.on('connection', (socket) => {     //connection event to client
     socket.on('join',(params,callback)=>{
         if(!isRealString(params.name)|| !isRealString(params.room))
         {
-         callback('Name require and Room name need');   
+        return  callback('Name require and Room name need');   
         }
 
         socket.join(params.room);
+        users.removeUser(socket.id);
+        users.addUser(socket.id,params.name,params.room);
         
+        io.to(params.room).emit('updateUserList',users.getUserList(params.room));
 
         socket.emit('newMessage', generateMessage('Admin', 'Welcome to Chat App'));
-        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has Join`));
+        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has Joined`));
         callback();
     });
 
@@ -41,7 +45,7 @@ io.on('connection', (socket) => {     //connection event to client
         console.log('Create Message', message);
         io.emit('newMessage', generateMessage(message.from, message.text));
         callback();
-        // socket.broadcast.emit('newMessage',{     //broadcast to other user not selfone 
+        // socket.broadcast.emit('newMessage',{  //broadcast to other user not selfone 
         //     from:message.from,
         //    text:message.text,
         //    createAt:new Date().getTime()
@@ -51,8 +55,12 @@ io.on('connection', (socket) => {     //connection event to client
 
         io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
     });
-    socket.on('disconnect', (socket) => {
-        console.log('User disconnected');
+    socket.on('disconnect', () => {
+      var user=users.removeUser(socket.id);
+      if(user){
+          io.to(user.room).emit('updateUserList',users.getUserList(user.room));
+          io.to(user.room).emit('newMessage',generateMessage('Admin',`${user.name} has left form room`));
+      }
     });
 });
 server.listen(port, () => {
