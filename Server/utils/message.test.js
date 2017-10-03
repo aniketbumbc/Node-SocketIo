@@ -11,9 +11,8 @@ describe('generateMessage', () => {
         expect(message.createdAt).toBeA('number');
         expect(message).toInclude({ from, text });
 
-    }); 
+    });
 });
-
 
 describe('generateLocationMessage', () => {
     it('Shoud generate correct location object ', () => {
